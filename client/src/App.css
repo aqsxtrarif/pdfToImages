@@ -1,0 +1,42 @@
+
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-size: 1.1rem;
+}
+h1{
+  padding: 1rem 2.2rem;
+  background: #820202;
+  font-size: 2rem;
+  color: #ffffff;
+  font-weight: 500;
+}
+form{
+  display: flex;
+  margin: 5rem 10rem;
+  flex-direction: column;
+  gap: 1rem;
+}
+input{
+  padding: 0.8rem 1rem;
+  border-radius: 2rem;
+  border: 2px solid #820202;
+  outline: none;
+}
+input::placeholder{  
+  color: #000;
+}
+input[type='text']{   
+  text-transform: capitalize;
+}
+input[type='file']{
+  border: none;
+}
+input[type='submit']{
+  width: 8rem;
+  background: #820202;
+  color: #ffffff;
+  text-transform: uppercase;
+  cursor: pointer;
+}
