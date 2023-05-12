@@ -40,3 +40,26 @@ input[type='submit']{
   text-transform: uppercase;
   cursor: pointer;
 }
+.pdfinfo{
+  display: flex;  
+  gap: 3rem;
+}   
+.pdf {
+  display: flex; 
+  margin: 6rem 10rem;  
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.pdf h3{ 
+  font-size: 2rem;
+  color: #000000;
+  font-weight: 500;
+}
+.pdfimages{
+  margin: -2rem 10rem;  
+}
+.pdfimages h3{
+  font-size: 1.5rem;
+  color: #000000;
+  font-weight:  500
+}

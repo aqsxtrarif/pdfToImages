@@ -8,7 +8,7 @@ const cors = require('cors');
 require('dotenv/config');
 
 const app = express();
-app.use(cors())
+app.use(cors());
 
 // Connect to mongodb Atlas
 mongoose.connect(process.env.DB, {
@@ -37,13 +37,15 @@ app.post('/uploadForm', upload.single('myFile'), async (req, res) => {
           success:  "wrongFile" , 
           message : "Please upload pdf file only"})
       } 
-  
+
       // Convert the PDF file to images using pdfImgConvert   
       const images = await pdfImgConvert.convert(fileBuffer, {
+        width: 300, //Number in px
+        height: 300, // Number in px 
         density: 300,
-        format: 'png'
+        format: 'png', 
       }); 
-  
+
       const uploadDoc = new uploadModel({
         filename: req.file.originalname,
         data: fileBuffer,
@@ -52,24 +54,25 @@ app.post('/uploadForm', upload.single('myFile'), async (req, res) => {
         email: req.body.email,
         images: []
       });   
-   
+
       //  As images return ArrayBuffer so convert it to Buffer 
       const imageObjects = images.map(image => ({ data: Buffer.from(image) })); 
       // Insert All images of pdf at once in db
       const savedImages = await ImagesModel.insertMany(imageObjects); 
-   
+
       // Add the IDs of the images to the document's images array
       uploadDoc.images = savedImages.map((image) => {
         return image._id;
       }); 
-   
+
       const savedUpload = await uploadDoc.save(); 
-  
+
       res.send({
         success: true,
         message: "Submitted Sucessfully", 
+        upload: savedUpload,
       });
-  
+
     } catch (error) {
       console.error('Error processing file upload:', error);
       res.status(500).send({
@@ -80,6 +83,38 @@ app.post('/uploadForm', upload.single('myFile'), async (req, res) => {
   });
 
 
+
+
+  app.get('/pdf/:id', async (req, res) => {
+    try {
+      const uploadId = req.params.id;
+      const upload = await uploadModel.findById(uploadId);
+
+      if (!upload) {
+        return res.status(404).json({ success: false, message: 'PDF not found' });
+      }
+
+      const images = await ImagesModel.find({ _id: { $in: upload.images } });
+
+      const formattedImages = images.map((image) => ({
+        _id: image._id,
+        data: image.data.toString('base64')
+      }));
+
+      res.json({ success: true, upload, images: formattedImages });
+
+    } catch (error) {
+      console.error('Error retrieving PDF and images:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: 'An error occurred while retrieving the PDF and images' });
+    }
+  });
+
+
+
+
+
 app.listen(process.env.PORT, () => {
     console.log(`Server listening on port ${process.env.PORT}`);
-})
+});

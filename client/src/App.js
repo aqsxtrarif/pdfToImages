@@ -1,5 +1,4 @@
-import './App.css';
-import 'react-toastify/dist/ReactToastify.css';
+import './App.css'; 
 import Form from './Form';
 
 function App() {
